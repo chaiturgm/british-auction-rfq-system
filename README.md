@@ -40,7 +40,6 @@ Frontend runs on:
 http://localhost:5173
 ```
 
-```md
 ## HLD / Architecture
 
 The following diagram shows the high-level architecture of the British Auction RFQ System.
@@ -105,18 +104,47 @@ The following diagram shows the high-level architecture of the British Auction R
 | GET | `/api/rfqs/:id` | Get RFQ details |
 | POST | `/api/rfqs/:id/bids` | Submit supplier bid |
 
+## Core Features
+
+### RFQ Creation
+
+Users can create an RFQ with British Auction enabled.
+
+RFQ creation includes:
+
+- RFQ Name
+- Reference ID
+- Bid Start Date & Time
+- Bid Close Date & Time
+- Forced Bid Close Date & Time
+- Pickup / Service Date
+- Trigger Window X Minutes
+- Extension Duration Y Minutes
+- Extension Trigger Type
+
+### Quote / Bid Submission
+
+Suppliers can submit quotes with:
+
+- Carrier Name
+- Freight Charges
+- Origin Charges
+- Destination Charges
+- Transit Time
+- Validity of Quote
+
+The total bid price is calculated as:
+
+```txt
+Total Price = Freight Charges + Origin Charges + Destination Charges
+```
+
 ## British Auction Rules Implemented
 
 1. RFQ can be created with British Auction enabled.
-2. RFQ creation includes:
-   - RFQ Name
-   - Reference ID
-   - Bid Start Date & Time
-   - Bid Close Date & Time
-   - Forced Bid Close Date & Time
-   - Pickup / Service Date
+2. RFQ creation includes all required auction fields.
 3. Forced Bid Close Time must be greater than Bid Close Time.
-4. Bid Start Time must be before Bid Close Time.
+4. Bid Start Time must be earlier than Bid Close Time.
 5. Bids are blocked before Bid Start Time.
 6. Bids are blocked after current Bid Close Time.
 7. Bids are blocked after Forced Bid Close Time.
@@ -124,24 +152,92 @@ The following diagram shows the high-level architecture of the British Auction R
 9. Trigger Window X is implemented.
 10. Extension Duration Y is implemented.
 11. All three trigger types are implemented:
-    - Bid received in last X minutes
-    - Any supplier rank change in last X minutes
-    - Lowest bidder / L1 rank change in last X minutes
-12. Auction listing displays:
-    - RFQ Name / ID
-    - Current Lowest Bid
-    - Current Bid Close Time
-    - Forced Close Time
-    - Auction Status
-13. Auction details displays:
-    - All bids sorted by price
-    - Supplier ranking L1, L2, L3
-    - Quote details
-    - Auction configuration
-    - Activity log with bid submissions, time extensions, and reasons
+   - Bid received in last X minutes
+   - Any supplier rank change in last X minutes
+   - Lowest bidder / L1 rank change in last X minutes
+
+## Auction Listing Page
+
+The auction listing page displays:
+
+- RFQ Name / ID
+- Current Lowest Bid
+- Current Bid Close Time
+- Forced Close Time
+- Auction Status
+
+Auction status can be:
+
+- Not Started
+- Active
+- Closed
+- Force Closed
+
+## Auction Details Page
+
+The auction details page displays:
+
+- RFQ details
+- Current lowest bid
+- Current bid close time
+- Forced close time
+- Auction configuration
+- All supplier bids sorted by price
+- Supplier ranking as L1, L2, L3, etc.
+- Activity log
+
+## Activity Log
+
+The activity log records:
+
+- RFQ creation
+- Bid submissions
+- Time extensions
+- Reason for each extension
+- Old close time
+- New close time
+
+## Validation Rules Implemented
+
+- Forced Bid Close Time must be greater than Bid Close Time.
+- Bid Start Time must be earlier than Bid Close Time.
+- Bids cannot be submitted before Bid Start Time.
+- Bids cannot be submitted after current Bid Close Time.
+- Bids cannot be submitted after Forced Bid Close Time.
+- Auction extensions are capped at Forced Bid Close Time.
+- Supplier rankings are recalculated after every bid.
 
 ## Ranking Assumption
 
-A supplier may submit multiple bids. For supplier ranking, each supplier is ranked by their best current bid, meaning their lowest submitted total price. Ties are broken by earlier bid time.
+A supplier may submit multiple bids.
+
+For supplier ranking, each supplier is ranked by their best current bid, meaning their lowest submitted total price.
+
+Ties are broken by earlier bid time.
 
 The details page still shows all individual bids sorted by total price.
+
+## Project Structure
+
+```txt
+british-auction-rfq-system/
+├── backend/
+│   ├── package.json
+│   └── src/
+│       ├── auctionService.js
+│       ├── db.js
+│       └── server.js
+├── frontend/
+│   ├── package.json
+│   ├── index.html
+│   └── src/
+│       ├── main.jsx
+│       └── styles.css
+├── docs/
+│   └── hld-architecture.png
+└── README.md
+```
+
+## Notes
+
+This project is built as a simplified assignment/demo implementation. It focuses on correctness of British Auction rules, RFQ creation, bidding flow, ranking, extension logic, forced close validation, and clear visibility of auction progress.
