@@ -40,37 +40,12 @@ Frontend runs on:
 http://localhost:5173
 ```
 
+```md
 ## HLD / Architecture
 
-```txt
-+---------------------------+
-|       React Frontend      |
-| Create RFQ                |
-| Auction Listing           |
-| Auction Details           |
-| Submit Bid                |
-+-------------+-------------+
-              |
-              | REST API / JSON
-              v
-+-------------+-------------+
-|     Node.js Express API   |
-| RFQ APIs                  |
-| Bid Submission API        |
-| Auction Extension Logic   |
-| Ranking Logic             |
-| Activity Log Logic        |
-+-------------+-------------+
-              |
-              | SQL
-              v
-+-------------+-------------+
-|        SQLite Database    |
-| rfqs                      |
-| bids                      |
-| activity_logs             |
-+---------------------------+
-```
+The following diagram shows the high-level architecture of the British Auction RFQ System.
+
+![High Level Design - British Auction RFQ System](docs/hld-architecture.png)
 
 ## Database Schema
 
